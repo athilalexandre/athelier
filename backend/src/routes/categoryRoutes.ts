@@ -1,12 +1,14 @@
-import { Router } from 'express';
+import { Router, RequestHandler } from 'express';
 import * as categoryController from '../controllers/categoryController';
+import { authenticateToken, authorizeRoles } from '../middlewares/authMiddleware';
+import { Role } from '../../src/generated/prisma';
 
 const router = Router();
 
-router.post('/', categoryController.createCategory);
-router.get('/', categoryController.getCategories);
-router.get('/:id', categoryController.getCategoryById);
-router.put('/:id', categoryController.updateCategory);
-router.delete('/:id', categoryController.deleteCategory);
+router.post('/', authenticateToken, authorizeRoles(Role.ADMIN), categoryController.createCategory as RequestHandler);
+router.get('/', categoryController.getCategories as RequestHandler);
+router.get('/:id', categoryController.getCategoryById as RequestHandler);
+router.put('/:id', authenticateToken, authorizeRoles(Role.ADMIN), categoryController.updateCategory as RequestHandler);
+router.delete('/:id', authenticateToken, authorizeRoles(Role.ADMIN), categoryController.deleteCategory as RequestHandler);
 
 export default router; 

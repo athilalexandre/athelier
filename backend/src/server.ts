@@ -4,6 +4,7 @@ import path from 'path';
 import prisma from './lib/prisma';
 import productRoutes from './routes/productRoutes';
 import categoryRoutes from './routes/categoryRoutes';
+import authRoutes from './routes/authRoutes';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
@@ -24,6 +25,9 @@ app.use('/api/products', productRoutes);
 
 // Category routes
 app.use('/api/categories', categoryRoutes);
+
+// Authentication routes
+app.use('/api/auth', authRoutes);
 
 app.get('/api/health/db', async (req, res) => {
   try {

@@ -1,12 +1,14 @@
-import { Router } from 'express';
+import { Router, RequestHandler } from 'express';
 import * as productController from '../controllers/productController';
+import { authenticateToken, authorizeRoles } from '../middlewares/authMiddleware';
+import { Role } from '../../src/generated/prisma';
 
 const router = Router();
 
-router.post('/', productController.createProduct);
-router.get('/', productController.getProducts);
-router.get('/:id', productController.getProductById);
-router.put('/:id', productController.updateProduct);
-router.delete('/:id', productController.deleteProduct);
+router.post('/', authenticateToken, authorizeRoles(Role.ADMIN), productController.createProduct as RequestHandler);
+router.get('/', productController.getProducts as RequestHandler);
+router.get('/:id', productController.getProductById as RequestHandler);
+router.put('/:id', authenticateToken, authorizeRoles(Role.ADMIN), productController.updateProduct as RequestHandler);
+router.delete('/:id', authenticateToken, authorizeRoles(Role.ADMIN), productController.deleteProduct as RequestHandler);
 
 export default router; 
