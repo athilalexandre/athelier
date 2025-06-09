@@ -2,6 +2,8 @@ import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
 import prisma from './lib/prisma';
+import productRoutes from './routes/productRoutes';
+import categoryRoutes from './routes/categoryRoutes';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
@@ -16,6 +18,12 @@ app.get('/', (req, res) => {
 app.get('/api', (req, res) => {
   res.status(200).json({ message: 'Backend is healthy!' });
 });
+
+// Product routes
+app.use('/api/products', productRoutes);
+
+// Category routes
+app.use('/api/categories', categoryRoutes);
 
 app.get('/api/health/db', async (req, res) => {
   try {
