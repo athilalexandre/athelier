@@ -1,24 +1,30 @@
 import apiClient from './apiClient';
+import { LoginResponse, User } from '../types/api';
 
-export const registerUser = async (userData: any) => {
-  try {
-    const response = await apiClient.post('/auth/register', userData);
+export const authService = {
+  async login(email: string, password: string): Promise<LoginResponse> {
+    const response = await apiClient.post<LoginResponse>('/auth/login', {
+      email,
+      password,
+    });
     return response.data;
-  } catch (error) {
-    console.error('Error registering user:', error);
-    throw error;
-  }
-};
+  },
 
-export const loginUser = async (credentials: any) => {
-  try {
-    const response = await apiClient.post('/auth/login', credentials);
-    if (response.data.token) {
-      localStorage.setItem('jwtToken', response.data.token);
-    }
+  async register(name: string, email: string, password: string): Promise<LoginResponse> {
+    const response = await apiClient.post<LoginResponse>('/auth/register', {
+      name,
+      email,
+      password,
+    });
     return response.data;
-  } catch (error) {
-    console.error('Error logging in:', error);
-    throw error;
-  }
+  },
+
+  async getCurrentUser(): Promise<User> {
+    const response = await apiClient.get<User>('/auth/me');
+    return response.data;
+  },
+
+  async logout(): Promise<void> {
+    await apiClient.post('/auth/logout');
+  },
 }; 
