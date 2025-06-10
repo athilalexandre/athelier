@@ -1,10 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // Ajuste o caminho se necessário
+import { useAuth } from '../context/AuthContext';
+import { categoryService } from '../services/categoryService';
+import { Category } from '../types/api';
 
 const Header: React.FC = () => {
-  const { isAuthenticated, user, logout, isLoading } = useAuth();
+  const { isAuthenticated, user, logout, loading } = useAuth();
   const navigate = useNavigate();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setIsLoadingCategories(true);
+        const response = await categoryService.getCategories();
+        setCategories(response.data);
+      } catch (err) {
+        setError('Erro ao carregar categorias');
+        console.error('Error fetching categories:', err);
+      } finally {
+        setIsLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -26,7 +48,7 @@ const Header: React.FC = () => {
           <Link to="/wishlist" className="text-brand-text hover:text-brand-primary font-medium">Favoritos</Link>
           <Link to="/cart" className="text-brand-text hover:text-brand-primary font-medium">Carrinho</Link>
 
-          {isLoading ? (
+          {loading ? (
             <span className="text-brand-text">Carregando...</span>
           ) : isAuthenticated && user ? (
             <>
@@ -51,6 +73,29 @@ const Header: React.FC = () => {
           )}
         </div>
       </nav>
+
+      {/* Categories Navigation */}
+      <div className="bg-brand-secondary/10 py-2">
+        <div className="container mx-auto px-6">
+          {isLoadingCategories ? (
+            <div className="text-center text-brand-text">Carregando categorias...</div>
+          ) : error ? (
+            <div className="text-center text-red-500">{error}</div>
+          ) : (
+            <div className="flex flex-wrap justify-center gap-4 overflow-x-auto scrollbar-thin scrollbar-thumb-brand-primary scrollbar-track-transparent">
+              {categories.map((category) => (
+                <Link
+                  key={category.id}
+                  to={`/products?category=${category.id}`}
+                  className="text-brand-text hover:text-brand-primary font-medium whitespace-nowrap transition-colors duration-200"
+                >
+                  {category.name}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </header>
   );
 };
