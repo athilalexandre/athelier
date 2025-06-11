@@ -21,6 +21,7 @@ const ProductListPage: React.FC = () => {
       try {
         setLoading(true);
         const categoryId = searchParams.get('category');
+        console.log('Frontend categoryId from URL:', categoryId);
         const search = searchParams.get('search');
         const page = Number(searchParams.get('page')) || 1;
 

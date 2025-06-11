@@ -41,6 +41,12 @@ app.get('/api/health/db', async (req, res) => {
   }
 });
 
+// Middleware de tratamento de erros global
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Erro global do servidor:', err.stack);
+  res.status(500).json({ message: 'Ocorreu um erro interno no servidor.' });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 }); 

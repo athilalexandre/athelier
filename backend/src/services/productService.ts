@@ -6,6 +6,7 @@ export const createProduct = async (data: any) => {
 };
 
 export const getProducts = async (filters?: ProductFilters) => {
+  console.log('Received filters in productService.getProducts:', filters);
   const { page = 1, limit = 12, categoryId, search, minPrice, maxPrice } = filters || {};
   const skip = (page - 1) * limit;
 
@@ -22,6 +23,8 @@ export const getProducts = async (filters?: ProductFilters) => {
   if (maxPrice !== undefined) {
     where.price = { ...where.price, lte: maxPrice };
   }
+  console.log('Constructed Prisma where clause:', where);
+  console.log('Pagination params: skip=', skip, ', take=', limit);
 
   const products = await prisma.product.findMany({
     where,
