@@ -37,20 +37,20 @@ const ProductDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-brand-text">Carregando produto...</div>
+      <div className="container">
+        <div className="loading">Carregando produto...</div>
       </div>
     );
   }
 
   if (error || !product) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-500">
+      <div className="container">
+        <div className="error">
           {error || 'Produto não encontrado'}
         </div>
         <div className="text-center mt-4">
-          <Link to="/products" className="text-brand-primary hover:text-brand-secondary">
+          <Link to="/products" className="nav-link">
             Voltar para lista de produtos
           </Link>
         </div>
@@ -62,50 +62,48 @@ const ProductDetailPage: React.FC = () => {
   const imageUrl = product.images && product.images.trim() !== '' ? product.images : placeholderImage;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container">
       <div className="mb-4">
-        <Link to="/products" className="text-brand-primary hover:text-brand-secondary">
+        <Link to="/products" className="nav-link">
           ← Voltar para produtos
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Imagem do Produto */}
-        <div className="relative aspect-[3/4] rounded-lg overflow-hidden">
+      <div className="product-detail">
+        <div>
           <img
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover"
+            className="product-detail-image"
             onError={(e) => (e.currentTarget.src = placeholderImage)}
           />
         </div>
 
-        {/* Detalhes do Produto */}
-        <div className="flex flex-col">
+        <div className="product-detail-info">
           {product.category && (
             <Link
               to={`/products?categoryId=${product.categoryId}`}
-              className="text-sm text-brand-secondary hover:text-brand-primary uppercase tracking-wider font-medium mb-2"
+              className="product-category"
             >
               {product.category.name}
             </Link>
           )}
 
-          <h1 className="text-3xl font-serif text-brand-text mb-4">
+          <h1 className="product-detail-name">
             {product.name}
           </h1>
 
-          <p className="text-2xl font-semibold text-brand-primary mb-6">
+          <p className="product-detail-price">
             {formatPrice(product.price)}
           </p>
 
-          <div className="prose prose-sm text-gray-600 mb-8">
+          <div className="product-detail-description">
             <p>{product.description}</p>
           </div>
 
-          <div className="mt-auto space-y-4">
+          <div className="product-detail-buttons">
             <button
-              className="w-full bg-brand-primary hover:bg-brand-secondary text-white py-3 px-6 rounded-md transition-colors duration-300 font-medium"
+              className="detail-button primary-button"
               onClick={() => {
                 // TODO: Implementar adição ao carrinho
               }}
@@ -114,7 +112,7 @@ const ProductDetailPage: React.FC = () => {
             </button>
 
             <button
-              className="w-full bg-transparent border-2 border-brand-primary text-brand-primary hover:bg-brand-primary hover:text-white py-3 px-6 rounded-md transition-all duration-300 font-medium"
+              className="detail-button secondary-button"
               onClick={() => {
                 // TODO: Implementar adição aos favoritos
               }}

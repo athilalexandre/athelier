@@ -52,43 +52,41 @@ const ProductListPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-brand-text">Carregando produtos...</div>
+      <div className="container">
+        <div className="loading">Carregando produtos...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center text-red-500">{error}</div>
+      <div className="container">
+        <div className="error">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-brand-text mb-2">Produtos</h1>
-        <p className="text-gray-600">
+        <h1 className="product-detail-name">Produtos</h1>
+        <p className="product-category">
           {pagination.total} produtos encontrados
         </p>
       </div>
 
       {products.length === 0 ? (
-        <div className="text-center text-gray-600 py-8">
-          Nenhum produto encontrado
-        </div>
+        <div className="error">Nenhum produto encontrado</div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="product-grid">
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
 
           {pagination.totalPages > 1 && (
-            <div className="flex justify-center mt-8 gap-2">
+            <div className="pagination">
               {Array.from({ length: pagination.totalPages }, (_, i) => i + 1).map((page) => (
                 <button
                   key={page}
@@ -97,11 +95,7 @@ const ProductListPage: React.FC = () => {
                     newParams.set('page', page.toString());
                     window.history.pushState({}, '', `?${newParams.toString()}`);
                   }}
-                  className={`px-4 py-2 rounded-md ${
-                    page === pagination.page
-                      ? 'bg-brand-primary text-white'
-                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                  }`}
+                  className={`page-button ${page === pagination.page ? 'active' : ''}`}
                 >
                   {page}
                 </button>
