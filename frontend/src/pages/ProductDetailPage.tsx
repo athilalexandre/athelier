@@ -8,10 +8,15 @@ const ProductDetailPage: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [customizationText, setCustomizationText] = useState<string>('');
 
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!id) return;
+      if (!id) {
+        setError('ID do produto não fornecido');
+        setLoading(false);
+        return;
+      }
       
       try {
         setLoading(true);
@@ -38,7 +43,20 @@ const ProductDetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="container">
-        <div className="loading">Carregando produto...</div>
+        <div className="loading">
+          <div className="animate-pulse">
+            <div className="product-detail">
+              <div className="bg-gray-300 h-96 rounded-lg"></div>
+              <div className="space-y-6">
+                <div className="h-8 bg-gray-300 rounded w-3/4"></div>
+                <div className="h-12 bg-gray-300 rounded w-1/2"></div>
+                <div className="h-24 bg-gray-300 rounded"></div>
+                <div className="h-6 bg-gray-300 rounded w-1/3"></div>
+                <div className="h-12 bg-gray-300 rounded w-full"></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -70,7 +88,7 @@ const ProductDetailPage: React.FC = () => {
       </div>
 
       <div className="product-detail">
-        <div>
+        <div className="sticky top-24">
           <img
             src={imageUrl}
             alt={product.name}
@@ -101,14 +119,68 @@ const ProductDetailPage: React.FC = () => {
             <p>{product.description}</p>
           </div>
 
+          {product.materials && (
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-gray-800 mb-1">Materiais</h2>
+              <p className="text-gray-700">{product.materials}</p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mb-6 text-sm">
+            {product.dimensions && (
+              <div>
+                <strong className="text-gray-800">Dimensões:</strong>
+                <span className="text-gray-600 ml-2">{product.dimensions}</span>
+              </div>
+            )}
+            {product.weight !== null && product.weight !== undefined && (
+              <div>
+                <strong className="text-gray-800">Peso:</strong>
+                <span className="text-gray-600 ml-2">{product.weight} kg</span>
+              </div>
+            )}
+            {product.inspiration && (
+              <div>
+                <strong className="text-gray-800">Inspiração:</strong>
+                <span className="text-gray-600 ml-2">{product.inspiration}</span>
+              </div>
+            )}
+          </div>
+
+          <div className="mb-6">
+            {product.stockQuantity > 0 ? (
+              <p className="text-green-600 font-semibold">
+                Em estoque ({product.stockQuantity} unidades disponíveis)
+              </p>
+            ) : (
+              <p className="text-red-500 font-semibold">Fora de estoque</p>
+            )}
+          </div>
+
+          <div className="mb-6">
+            <label htmlFor="customization" className="block text-md font-semibold text-gray-800 mb-2">
+              Detalhes para Customização (opcional)
+            </label>
+            <textarea
+              id="customization"
+              value={customizationText}
+              onChange={(e) => setCustomizationText(e.target.value)}
+              rows={3}
+              placeholder="Ex: Cor específica, nome a ser gravado, ajuste de tamanho, etc."
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent"
+            />
+          </div>
+
           <div className="product-detail-buttons">
             <button
               className="detail-button primary-button"
+              disabled={product.stockQuantity === 0}
               onClick={() => {
                 // TODO: Implementar adição ao carrinho
+                alert(`${product.name} adicionado ao carrinho! Customização: ${customizationText || 'Nenhuma'}`);
               }}
             >
-              Adicionar ao Carrinho
+              {product.stockQuantity > 0 ? 'Adicionar ao Carrinho' : 'Produto Indisponível'}
             </button>
 
             <button

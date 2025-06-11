@@ -25,9 +25,14 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  images?: string;
+  images: string;
   categoryId: string;
   category?: Category;
+  materials?: string;
+  dimensions?: string;
+  weight?: number;
+  inspiration?: string;
+  stockQuantity: number;
   createdAt: string;
   updatedAt: string;
 }
