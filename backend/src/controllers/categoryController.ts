@@ -13,15 +13,19 @@ export const createCategory = async (req: Request, res: Response) => {
 export const getCategories = async (req: Request, res: Response) => {
   try {
     const categories = await categoryService.getCategories();
+    console.log('Categories data from backend (controller):', categories.map(c => ({ id: c.id, name: c.name })));
+    
+    // Wrap the categories in a paginated response
     res.status(200).json({
       data: categories,
       total: categories.length,
       page: 1,
       limit: categories.length,
-      totalPages: 1,
+      totalPages: 1
     });
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching categories', error: (error as Error).message });
+    console.error('Error in getCategories controller:', error);
+    res.status(500).json({ message: 'Erro ao buscar categorias.', error: (error as Error).message });
   }
 };
 

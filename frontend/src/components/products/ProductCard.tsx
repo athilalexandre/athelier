@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../types/api';
 import { useCart } from '../../context/CartContext';
@@ -9,6 +9,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToCart } = useCart();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -19,22 +20,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     addToCart(product, 1);
     alert(`${product.name} adicionado ao carrinho!`);
   };
 
-  const placeholderImage = "https://via.placeholder.com/600x600.png?text=Sem+Imagem";
+  const placeholderImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8lRbS7eKYzDq-Ftxc1p8G_TTw2unWBMEYUw&s";
   const imageUrl = product.images && product.images.trim() !== '' ? product.images : placeholderImage;
 
   return (
     <div className="product-card">
       <Link to={`/products/${product.id}`} className="product-image-link">
-        <img
-          src={imageUrl}
-          alt={product.name}
-          className="product-image"
-          onError={(e) => (e.currentTarget.src = placeholderImage)}
-        />
+        <div className="product-image-container">
+          {!imageLoaded && <div className="product-image-placeholder" />}
+          <img
+            src={imageUrl}
+            alt={product.name}
+            className={`product-image ${imageLoaded ? 'loaded' : ''}`}
+            onLoad={() => setImageLoaded(true)}
+            onError={(e) => {
+              e.currentTarget.src = placeholderImage;
+              setImageLoaded(true);
+            }}
+          />
+        </div>
       </Link>
       <div className="product-info">
         {product.category && (

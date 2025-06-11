@@ -10,6 +10,7 @@ const ProductDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [customizationText, setCustomizationText] = useState<string>('');
+  const [imageLoaded, setImageLoaded] = useState(false);
   const { addToCart } = useCart();
 
   useEffect(() => {
@@ -53,16 +54,13 @@ const ProductDetailPage: React.FC = () => {
     return (
       <div className="container">
         <div className="loading">
-          <div className="animate-pulse">
-            <div className="product-detail">
-              <div className="bg-gray-300 h-96 rounded-lg"></div>
-              <div className="space-y-6">
-                <div className="h-8 bg-gray-300 rounded w-3/4"></div>
-                <div className="h-12 bg-gray-300 rounded w-1/2"></div>
-                <div className="h-24 bg-gray-300 rounded"></div>
-                <div className="h-6 bg-gray-300 rounded w-1/3"></div>
-                <div className="h-12 bg-gray-300 rounded w-full"></div>
-              </div>
+          <div className="product-detail">
+            <div className="product-detail-image-placeholder"></div>
+            <div className="product-detail-info-placeholder">
+              <div className="placeholder-line"></div>
+              <div className="placeholder-line"></div>
+              <div className="placeholder-line"></div>
+              <div className="placeholder-line"></div>
             </div>
           </div>
         </div>
@@ -85,7 +83,7 @@ const ProductDetailPage: React.FC = () => {
     );
   }
 
-  const placeholderImage = "https://via.placeholder.com/800x1000.png?text=Sem+Imagem";
+  const placeholderImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8lRbS7eKYzDq-Ftxc1p8G_TTw2unWBMEYUw&s";
   const imageUrl = product.images && product.images.trim() !== '' ? product.images : placeholderImage;
 
   return (
@@ -97,12 +95,17 @@ const ProductDetailPage: React.FC = () => {
       </div>
 
       <div className="product-detail">
-        <div className="sticky top-24">
+        <div className="product-detail-image-container">
+          {!imageLoaded && <div className="product-detail-image-placeholder" />}
           <img
             src={imageUrl}
             alt={product.name}
-            className="product-detail-image"
-            onError={(e) => (e.currentTarget.src = placeholderImage)}
+            className={`product-detail-image ${imageLoaded ? 'loaded' : ''}`}
+            onLoad={() => setImageLoaded(true)}
+            onError={(e) => {
+              e.currentTarget.src = placeholderImage;
+              setImageLoaded(true);
+            }}
           />
         </div>
 
@@ -129,45 +132,45 @@ const ProductDetailPage: React.FC = () => {
           </div>
 
           {product.materials && (
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-800 mb-1">Materiais</h2>
-              <p className="text-gray-700">{product.materials}</p>
+            <div className="product-detail-section">
+              <h2 className="product-detail-section-title">Materiais</h2>
+              <p className="product-detail-section-content">{product.materials}</p>
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mb-6 text-sm">
+          <div className="product-detail-specs">
             {product.dimensions && (
-              <div>
-                <strong className="text-gray-800">Dimensões:</strong>
-                <span className="text-gray-600 ml-2">{product.dimensions}</span>
+              <div className="product-detail-spec">
+                <strong>Dimensões:</strong>
+                <span>{product.dimensions}</span>
               </div>
             )}
             {product.weight !== null && product.weight !== undefined && (
-              <div>
-                <strong className="text-gray-800">Peso:</strong>
-                <span className="text-gray-600 ml-2">{product.weight} kg</span>
+              <div className="product-detail-spec">
+                <strong>Peso:</strong>
+                <span>{product.weight} kg</span>
               </div>
             )}
             {product.inspiration && (
-              <div>
-                <strong className="text-gray-800">Inspiração:</strong>
-                <span className="text-gray-600 ml-2">{product.inspiration}</span>
+              <div className="product-detail-spec">
+                <strong>Inspiração:</strong>
+                <span>{product.inspiration}</span>
               </div>
             )}
           </div>
 
-          <div className="mb-6">
+          <div className="product-detail-stock">
             {product.stockQuantity > 0 ? (
-              <p className="text-green-600 font-semibold">
+              <p className="product-detail-stock-available">
                 Em estoque ({product.stockQuantity} unidades disponíveis)
               </p>
             ) : (
-              <p className="text-red-500 font-semibold">Fora de estoque</p>
+              <p className="product-detail-stock-unavailable">Fora de estoque</p>
             )}
           </div>
 
-          <div className="mb-6">
-            <label htmlFor="customization" className="block text-md font-semibold text-gray-800 mb-2">
+          <div className="product-detail-customization">
+            <label htmlFor="customization" className="product-detail-label">
               Detalhes para Customização (opcional)
             </label>
             <textarea
@@ -176,7 +179,7 @@ const ProductDetailPage: React.FC = () => {
               onChange={(e) => setCustomizationText(e.target.value)}
               rows={3}
               placeholder="Ex: Cor específica, nome a ser gravado, ajuste de tamanho, etc."
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent"
+              className="product-detail-textarea"
             />
           </div>
 

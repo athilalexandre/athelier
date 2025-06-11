@@ -1,6 +1,6 @@
 import prisma from '../lib/prisma';
 
-export const createCategory = async (data: any) => {
+export const createCategory = async (data: { name: string; description?: string; imageUrl?: string }) => {
   return prisma.category.create({ data });
 };
 
@@ -12,7 +12,7 @@ export const getCategoryById = async (id: string) => {
   return prisma.category.findUnique({ where: { id } });
 };
 
-export const updateCategory = async (id: string, data: any) => {
+export const updateCategory = async (id: string, data: { name?: string; description?: string; imageUrl?: string }) => {
   return prisma.category.update({ where: { id }, data });
 };
 
