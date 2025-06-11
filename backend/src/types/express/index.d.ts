@@ -3,7 +3,10 @@ import { User as PrismaUser, Role } from '@prisma/client';
 declare global {
   namespace Express {
     interface Request {
-      user?: { id: string; role: Role }; // Add user property to Request type
+      user?: {
+        id: string;
+        role: Role;
+      };
     }
   }
 } 

@@ -33,6 +33,7 @@ export const getProducts = async (req: Request, res: Response) => {
     console.log('Constructed filters before passing to service:', filters);
 
     const { data, total, page: resPage, limit: resLimit, totalPages } = await productService.getProducts(filters);
+    console.log('Products data from backend:', data.map(p => ({ id: p.id, name: p.name, images: p.images })));
     res.status(200).json({
       data,
       total,

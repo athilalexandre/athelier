@@ -18,7 +18,8 @@ const Header: React.FC = () => {
       try {
         setIsLoadingCategories(true);
         const response = await categoryService.getCategories();
-        console.log('API Response for categories (this is actually the array):', response);
+        console.log('API Response for categories:', response);
+        console.log('Categories from response.data:', response.data);
         setCategories(response.data);
       } catch (err) {
         setError('Erro ao carregar categorias');

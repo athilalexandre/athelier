@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../src/generated/prisma';
 import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
@@ -6,23 +6,15 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Iniciando o seeding...');
 
-  // Criar categoria se não existir
-  let category = await prisma.category.findUnique({
-    where: { name: 'Livros' },
+  // Criar categoria (sem verificação de existência para garantir criação)
+  const category = await prisma.category.create({
+    data: {
+      id: uuidv4(),
+      name: 'Livros',
+      description: 'Livros de diversos gêneros e autores.',
+    },
   });
-
-  if (!category) {
-    category = await prisma.category.create({
-      data: {
-        id: uuidv4(),
-        name: 'Livros',
-        description: 'Livros de diversos gêneros e autores.',
-      },
-    });
-    console.log(`Categoria criada: ${category.name}`);
-  } else {
-    console.log(`Categoria '${category.name}' já existe.`);
-  }
+  console.log(`Categoria criada: ${category.name} com ID: ${category.id}`);
 
   // Criar produtos (livros) de exemplo
   const productsData = [
@@ -65,20 +57,18 @@ async function main() {
   ];
 
   for (const productData of productsData) {
-    // Verifica se o produto já existe pelo nome para evitar duplicatas
-    const existingProduct = await prisma.product.findUnique({
-      where: { name: productData.name },
-    });
-
-    if (!existingProduct) {
-      await prisma.product.create({ data: productData });
-      console.log(`Produto criado: ${productData.name}`);
-    } else {
-      console.log(`Produto '${productData.name}' já existe.`);
-    }
+    await prisma.product.create({ data: productData });
+    console.log(`Produto criado: ${productData.name}`);
   }
 
   console.log('Seeding concluído.');
+
+  // Verificação pós-seed
+  const allCategories = await prisma.category.findMany();
+  console.log('Categorias no banco de dados:', allCategories);
+
+  const allProducts = await prisma.product.findMany();
+  console.log('Produtos no banco de dados:', allProducts);
 }
 
 main()
