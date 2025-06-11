@@ -12,9 +12,32 @@ export const createProduct = async (req: Request, res: Response) => {
 
 export const getProducts = async (req: Request, res: Response) => {
   try {
-    const products = await productService.getProducts();
-    res.status(200).json(products);
+    const page = req.query.page ? Number(req.query.page) : undefined;
+    const limit = req.query.limit ? Number(req.query.limit) : undefined;
+    const search = req.query.search as string | undefined;
+    const categoryId = req.query.category as string | undefined;
+    const minPrice = req.query.minPrice ? Number(req.query.minPrice) : undefined;
+    const maxPrice = req.query.maxPrice ? Number(req.query.maxPrice) : undefined;
+
+    const filters = {
+      page: page && !isNaN(page) ? page : undefined,
+      limit: limit && !isNaN(limit) ? limit : undefined,
+      search,
+      categoryId,
+      minPrice: minPrice && !isNaN(minPrice) ? minPrice : undefined,
+      maxPrice: maxPrice && !isNaN(maxPrice) ? maxPrice : undefined,
+    };
+
+    const { data, total, page: resPage, limit: resLimit, totalPages } = await productService.getProducts(filters);
+    res.status(200).json({
+      data,
+      total,
+      page: resPage,
+      limit: resLimit,
+      totalPages,
+    });
   } catch (error) {
+    console.error('Error in getProducts controller:', error);
     res.status(500).json({ message: 'Error fetching products', error: (error as Error).message });
   }
 };

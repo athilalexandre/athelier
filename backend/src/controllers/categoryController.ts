@@ -13,7 +13,13 @@ export const createCategory = async (req: Request, res: Response) => {
 export const getCategories = async (req: Request, res: Response) => {
   try {
     const categories = await categoryService.getCategories();
-    res.status(200).json(categories);
+    res.status(200).json({
+      data: categories,
+      total: categories.length,
+      page: 1,
+      limit: categories.length,
+      totalPages: 1,
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error fetching categories', error: (error as Error).message });
   }

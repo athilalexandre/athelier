@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Product } from '../types/api';
 import { productService } from '../services/productService';
+import { useCart } from '../context/CartContext';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -9,6 +10,7 @@ const ProductDetailPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [customizationText, setCustomizationText] = useState<string>('');
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -38,6 +40,13 @@ const ProductDetailPage: React.FC = () => {
       style: 'currency',
       currency: 'BRL',
     }).format(price);
+  };
+
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart(product, 1, customizationText);
+      alert(`${product.name} adicionado ao carrinho! Customização: ${customizationText || 'Nenhuma'}`);
+    }
   };
 
   if (loading) {
@@ -175,10 +184,7 @@ const ProductDetailPage: React.FC = () => {
             <button
               className="detail-button primary-button"
               disabled={product.stockQuantity === 0}
-              onClick={() => {
-                // TODO: Implementar adição ao carrinho
-                alert(`${product.name} adicionado ao carrinho! Customização: ${customizationText || 'Nenhuma'}`);
-              }}
+              onClick={handleAddToCart}
             >
               {product.stockQuantity > 0 ? 'Adicionar ao Carrinho' : 'Produto Indisponível'}
             </button>

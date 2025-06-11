@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import { categoryService } from '../services/categoryService';
 import { Category } from '../types/api';
 
 const Header: React.FC = () => {
   const { isAuthenticated, user, logout, loading } = useAuth();
+  const { getTotalItemsCount } = useCart();
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
@@ -16,6 +18,7 @@ const Header: React.FC = () => {
       try {
         setIsLoadingCategories(true);
         const response = await categoryService.getCategories();
+        console.log('API Response for categories (this is actually the array):', response);
         setCategories(response.data);
       } catch (err) {
         setError('Erro ao carregar categorias');
@@ -33,6 +36,8 @@ const Header: React.FC = () => {
     navigate('/');
   };
 
+  const cartItemCount = getTotalItemsCount();
+
   return (
     <header className="header">
       <div className="container">
@@ -45,7 +50,7 @@ const Header: React.FC = () => {
             <Link to="/products" className="nav-link">Produtos</Link>
             <Link to="/about" className="nav-link">Sobre Nós</Link>
             <Link to="/wishlist" className="nav-link">Favoritos</Link>
-            <Link to="/cart" className="nav-link">Carrinho</Link>
+            <Link to="/cart" className="nav-link">Carrinho ({cartItemCount})</Link>
 
             {loading ? (
               <span className="loading">Carregando...</span>

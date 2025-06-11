@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import path from 'path';
+import cors from 'cors';
 import prisma from './lib/prisma';
 import productRoutes from './routes/productRoutes';
 import categoryRoutes from './routes/categoryRoutes';
@@ -10,6 +11,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const app = express();
 app.use(express.json());
+app.use(cors({ origin: 'http://localhost:3001' }));
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {

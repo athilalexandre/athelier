@@ -1,12 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../types/api';
+import { useCart } from '../../context/CartContext';
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const { addToCart } = useCart();
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
@@ -14,42 +17,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }).format(price);
   };
 
-  const placeholderImage = "https://via.placeholder.com/300x400.png?text=Sem+Imagem";
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    addToCart(product, 1);
+    alert(`${product.name} adicionado ao carrinho!`);
+  };
+
+  const placeholderImage = "https://via.placeholder.com/600x600.png?text=Sem+Imagem";
   const imageUrl = product.images && product.images.trim() !== '' ? product.images : placeholderImage;
 
   return (
     <div className="product-card">
-      <Link to={`/product/${product.id}`}>
-        <img 
+      <Link to={`/products/${product.id}`} className="product-image-link">
+        <img
           src={imageUrl}
-          alt={product.name} 
+          alt={product.name}
           className="product-image"
           onError={(e) => (e.currentTarget.src = placeholderImage)}
         />
       </Link>
       <div className="product-info">
         {product.category && (
-          <Link 
-            to={`/products?categoryId=${product.categoryId}`} 
-            className="product-category"
-          >
-            {product.category.name}
-          </Link>
+          <span className="product-category">{product.category.name}</span>
         )}
-        <Link to={`/product/${product.id}`}>
-          <h3 className="product-name" title={product.name}>
-            {product.name}
-          </h3>
-        </Link>
-        <p className="product-price">
-          {formatPrice(product.price)}
-        </p>
-        <Link 
-          to={`/product/${product.id}`} 
+        <h3 className="product-name">{product.name}</h3>
+        <p className="product-price">{formatPrice(product.price)}</p>
+        <button
+          onClick={handleAddToCart}
           className="product-button"
+          disabled={product.stockQuantity <= 0}
         >
-          Ver Detalhes
-        </Link>
+          {product.stockQuantity > 0 ? 'Adicionar ao Carrinho' : 'Indisponível'}
+        </button>
       </div>
     </div>
   );
