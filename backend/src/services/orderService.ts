@@ -62,7 +62,7 @@ export const orderService = {
           status: "PENDING",
           totalAmount: calculatedSubtotal, // Frete e impostos podem ser adicionados depois
           shippingFullName: shippingAddress.fullName,
-          shippingPostalCode: shippingAddress.zipCode,
+          shippingPostalCode: shippingAddress.postalCode,
           shippingStreet: shippingAddress.street,
           shippingNumber: shippingAddress.number,
           shippingComplement: shippingAddress.complement,

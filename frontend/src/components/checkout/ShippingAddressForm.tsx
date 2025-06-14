@@ -9,7 +9,7 @@ const ShippingAddressForm: React.FC<ShippingAddressFormProps> = ({ onSubmit }) =
   const [address, setAddress] = useState<ShippingAddress>({
     fullName: '',
     cpf: '',
-    zipCode: '',
+    postalCode: '',
     street: '',
     number: '',
     complement: '',
@@ -38,7 +38,7 @@ const ShippingAddressForm: React.FC<ShippingAddressFormProps> = ({ onSubmit }) =
     const requiredFields: Array<keyof ShippingAddress> = [
       'fullName',
       'cpf',
-      'zipCode',
+      'postalCode',
       'street',
       'number',
       'neighborhood',
@@ -96,16 +96,16 @@ const ShippingAddressForm: React.FC<ShippingAddressFormProps> = ({ onSubmit }) =
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div>
-          <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700">CEP</label>
+          <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700">CEP</label>
           <input
             type="text"
-            id="zipCode"
-            name="zipCode"
-            value={address.zipCode}
+            id="postalCode"
+            name="postalCode"
+            value={address.postalCode}
             onChange={handleChange}
             className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
           />
-          {errors.zipCode && <p className="text-red-500 text-xs mt-1">{errors.zipCode}</p>}
+          {errors.postalCode && <p className="text-red-500 text-xs mt-1">{errors.postalCode}</p>}
         </div>
         <div className="md:col-span-2">
           <label htmlFor="street" className="block text-sm font-medium text-gray-700">Rua</label>

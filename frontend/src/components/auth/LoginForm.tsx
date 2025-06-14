@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { AxiosError } from 'axios';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -29,8 +30,13 @@ const LoginForm: React.FC = () => {
       const from = (location.state as any)?.from?.pathname || '/';
       navigate(from, { replace: true });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Falha no login. Verifique suas credenciais.';
-      setError(message);
+      let errorMessage = 'Falha no login. Verifique suas credenciais.';
+      if (err instanceof AxiosError && err.response && err.response.data && err.response.data.message) {
+        errorMessage = err.response.data.message;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +53,7 @@ const LoginForm: React.FC = () => {
       )}
       
       {(error || authError) && (
-        <p className="text-red-500 text-sm bg-red-100 p-3 rounded text-center">
+        <p className="text-red-700 text-sm mb-4 text-center">
           {error || authError}
         </p>
       )}

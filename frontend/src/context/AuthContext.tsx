@@ -33,13 +33,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('jwtToken');
         if (token) {
           const user = await authService.getCurrentUser();
           setUser(user);
         }
       } catch (err) {
-        localStorage.removeItem('token');
+        localStorage.removeItem('jwtToken');
       } finally {
         setLoading(false);
       }
@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setError(null);
       const response = await authService.login(email, password);
-      localStorage.setItem('token', response.token);
+      localStorage.setItem('jwtToken', response.token);
       setUser(response.user);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during login');
@@ -64,7 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setError(null);
       const response = await authService.register(name, email, password);
-      localStorage.setItem('token', response.token);
+      localStorage.setItem('jwtToken', response.token);
       setUser(response.user);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during registration');
@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     try {
       await authService.logout();
-      localStorage.removeItem('token');
+      localStorage.removeItem('jwtToken');
       setUser(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during logout');

@@ -50,4 +50,10 @@ export const login = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({ message: 'Server error during login', error: (error as Error).message });
   }
+};
+
+export const logout = (req: Request, res: Response) => {
+  // Para JWTs, o logout geralmente é tratado no lado do cliente descartando o token.
+  // Este endpoint pode ser usado para qualquer lógica de limpeza ou notificação no servidor.
+  res.status(200).json({ message: 'Logout successful' });
 }; 

@@ -13,14 +13,33 @@ export const orderService = {
     }
   },
 
-  // Opcional: Futura função para obter pedido por ID
-  // getOrderById: async (orderId: string): Promise<OrderResponse> => {
-  //   try {
-  //     const response = await apiClient.get<OrderResponse>(`/orders/${orderId}`);
-  //     return response.data;
-  //   } catch (error: any) {
-  //     console.error("Erro ao buscar pedido por ID:", error.response?.data || error.message);
-  //     throw new Error(error.response?.data?.message || "Erro ao buscar os detalhes do pedido.");
-  //   }
-  // },
+  getOrderById: async (orderId: string): Promise<OrderResponse> => {
+    try {
+      const response = await apiClient.get<OrderResponse>(`/orders/${orderId}`);
+      return response.data;
+    } catch (error: any) {
+      console.error("Erro ao buscar pedido:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erro ao buscar os detalhes do pedido.");
+    }
+  },
+
+  getUserOrders: async (): Promise<OrderResponse[]> => {
+    try {
+      const response = await apiClient.get<OrderResponse[]>('/orders/user');
+      return response.data;
+    } catch (error: any) {
+      console.error("Erro ao buscar histórico de pedidos:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erro ao buscar seu histórico de pedidos.");
+    }
+  },
+
+  updateOrderStatus: async (orderId: string, status: string): Promise<OrderResponse> => {
+    try {
+      const response = await apiClient.patch<OrderResponse>(`/orders/${orderId}/status`, { status });
+      return response.data;
+    } catch (error: any) {
+      console.error("Erro ao atualizar status do pedido:", error.response?.data || error.message);
+      throw new Error(error.response?.data?.message || "Erro ao atualizar o status do pedido.");
+    }
+  }
 }; 

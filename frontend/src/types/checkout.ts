@@ -13,7 +13,7 @@ export interface CheckoutItem {
 export interface ShippingAddress {
   fullName: string;
   cpf: string;
-  zipCode: string;
+  postalCode: string;
   street: string;
   number: string;
   complement?: string;
