@@ -1,46 +1,140 @@
-# Getting Started with Create React App
+# Athelier Esmeraldo - E-commerce Backend & Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este projeto é uma aplicação de e-commerce completa, desenvolvida com um backend robusto em Node.js (Express com TypeScript e Prisma) e um frontend moderno em React (com TypeScript e Tailwind CSS). Ele inclui funcionalidades essenciais para uma loja online, desde a gestão de produtos e categorias até autenticação de usuários, um sistema de carrinho de compras e um fluxo de checkout detalhado.
 
-## Available Scripts
+## Funcionalidades Implementadas
 
-In the project directory, you can run:
+### 1. Autenticação de Usuários
 
-### `npm start`
+*   **Registro de Usuários:** Permite que novos usuários criem contas de forma segura.
+*   **Login de Usuários:** Sistema de autenticação para usuários existentes.
+*   **Roles (USER/ADMIN):** Diferenciação de permissões entre usuários comuns e administradores.
+*   **Proteção de Rotas:** Endpoints do backend protegidos por JWT, com middlewares de autenticação e autorização por função (`authenticateToken`, `authorizeRoles`).
+*   **Contexto de Autenticação (Frontend):** Gerenciamento de estado de autenticação no frontend (`AuthContext`), facilitando o acesso ao status do usuário e funções de login/logout em toda a aplicação.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### 2. Gestão de Produtos
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+*   **Criação/Atualização/Deleção de Produtos:** Funcionalidades de CRUD completas para produtos (apenas para administradores).
+*   **Listagem de Produtos:** Exibição de todos os produtos, com filtros opcionais por categoria.
+*   **Detalhes do Produto:** Página dedicada para exibir informações detalhadas de um produto específico (nome, preço, descrição, estoque, dimensões, peso, materiais, inspiração).
+*   **Imagens de Produtos:** Suporte para exibição de imagens dos produtos.
 
-### `npm test`
+### 3. Gestão de Categorias
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+*   **Criação/Atualização/Deleção de Categorias:** Funcionalidades de CRUD completas para categorias (apenas para administradores).
+*   **Listagem de Categorias:** Exibição de todas as categorias, usadas para navegação e filtragem de produtos.
 
-### `npm run build`
+### 4. Carrinho de Compras
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+*   **Adicionar ao Carrinho:** Permite adicionar produtos ao carrinho, com suporte para customizações e gerenciamento de quantidade.
+*   **Persistência Local:** O estado do carrinho é persistido no `localStorage`, mantendo os itens mesmo após o fechamento do navegador.
+*   **Remover/Atualizar Quantidade:** Funcionalidades para remover itens ou ajustar suas quantidades no carrinho.
+*   **Limpar Carrinho:** Opção para esvaziar o carrinho.
+*   **Subtotal e Contagem de Itens:** Cálculo dinâmico do subtotal e do número total de itens no carrinho.
+*   **Página do Carrinho:** Uma página dedicada para visualizar, gerenciar e revisar os itens no carrinho antes do checkout.
+*   **Notificações Toast:** Uso de `react-toastify` para fornecer feedback visual ao usuário sobre ações do carrinho (ex: "Produto adicionado ao carrinho!").
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 5. Fluxo de Checkout
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+*   **Definição de Tipos:** Estruturas de dados claras (`ShippingAddress`, `OrderPayload`) para o processo de checkout no frontend e backend.
+*   **Formulário de Endereço de Entrega:** Componente `ShippingAddressForm` para coleta de dados de envio (nome, CPF, CEP, rua, número, complemento, bairro, cidade, estado, telefone) com validação básica.
+*   **Resumo do Pedido:** Componente `OrderSummary` para exibir uma lista detalhada dos itens do carrinho e o subtotal, com placeholders para frete e total final.
+*   **Página de Checkout:** Uma página de fluxo de checkout em duas colunas, integrando o formulário de endereço e o resumo do pedido.
+*   **Finalização de Pedido (Lógica Inicial):** Lógica para construir o payload do pedido no frontend e enviá-lo ao backend (atualmente logado no console, pronta para integração com a API).
+*   **Redirecionamento Protegido:** Redireciona usuários não autenticados ou com carrinho vazio para páginas apropriadas, com notificações Toast.
 
-### `npm run eject`
+### 6. Funcionalidades de Pedido (Backend)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+*   **Modelos `Order` e `OrderItem`:** Definição robusta dos modelos no Prisma Schema, incluindo o enum `OrderStatus` para gerenciar o ciclo de vida dos pedidos.
+*   **Serviço de Pedidos (`orderService`):** Lógica de negócio crítica para criação de pedidos, incluindo validações rigorosas (estoque, produtos existentes), recálculo de preços no backend para segurança, e uso de transações Prisma para garantir a atomicidade (criação de pedido, itens e atualização de estoque).
+*   **Controlador de Pedidos (`orderController`):** Manipula as requisições de criação de pedidos, extrai dados do usuário autenticado e lida com respostas e erros HTTP de forma detalhada.
+*   **Rotas de Pedidos (`orderRoutes`):** Define a rota POST `/api/orders` para criação de pedidos, protegida por autenticação.
+*   **`asyncHandler` Utility:** Utilitário para lidar com funções assíncronas do Express, garantindo o tratamento de erros e a compatibilidade de tipagem.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Tecnologias Utilizadas
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+**Backend:**
+*   Node.js
+*   Express.js
+*   TypeScript
+*   Prisma (ORM)
+*   SQLite (Banco de Dados de Desenvolvimento)
+*   Bcryptjs (Hash de Senhas)
+*   jsonwebtoken (JWT para Autenticação)
+*   Nodemon (Desenvolvimento)
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+**Frontend:**
+*   React.js
+*   TypeScript
+*   React Router DOM
+*   Tailwind CSS (Estilização)
+*   Axios (Requisições HTTP)
+*   react-toastify (Notificações Toast)
 
-## Learn More
+## Como Rodar o Projeto
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Pré-requisitos
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+*   Node.js (v18 ou superior)
+*   npm ou yarn
+*   Git
+
+### Configuração do Backend
+
+1.  Navegue até o diretório `backend`:
+    ```bash
+    cd backend
+    ```
+2.  Instale as dependências:
+    ```bash
+    npm install
+    ```
+3.  Crie um arquivo `.env` na raiz do projeto (mesmo nível de `backend` e `frontend`) e adicione as seguintes variáveis de ambiente:
+    ```
+    DATABASE_URL="file:./backend/prisma/dev.db"
+    JWT_SECRET="sua_chave_secreta_jwt_aqui"
+    # Certifique-se de que o caminho do DB está correto para o seu ambiente.
+    ```
+4.  Execute as migrações do Prisma e gere o cliente (isso criará o arquivo `dev.db`):
+    ```bash
+    npx prisma migrate dev --name init
+    npx prisma migrate dev --name add-order-models # Para os modelos de pedido
+    ```
+5.  Opcional: Execute o seeder do Prisma para popular o banco de dados com dados de teste (se disponível):
+    ```bash
+    npx prisma db seed
+    ```
+6.  Inicie o servidor backend em modo de desenvolvimento:
+    ```bash
+    npm run dev
+    ```
+    O backend estará rodando em `http://localhost:3000` (ou na porta configurada).
+
+### Configuração do Frontend
+
+1.  Em uma nova janela do terminal, navegue até o diretório `frontend`:
+    ```bash
+    cd frontend
+    ```
+2.  Instale as dependências:
+    ```bash
+    npm install
+    ```
+3.  Instale as dependências adicionais para notificações toast (se ainda não o fez):
+    ```bash
+    npm install react-toastify
+    npm install @types/react-toastify
+    ```
+4.  Crie um arquivo `.env` na raiz do diretório `frontend` e adicione a seguinte variável de ambiente:
+    ```
+    REACT_APP_API_BASE_URL=http://localhost:3000/api
+    ```
+5.  Inicie a aplicação frontend em modo de desenvolvimento:
+    ```bash
+    npm start
+    ```
+    O frontend estará rodando em `http://localhost:3001` (ou na porta padrão do Create React App).
+
+## Contribuição
+
+Sinta-se à vontade para explorar e estender este projeto. Contribuições são bem-vindas! (Adicionar mais detalhes sobre como contribuir, se desejar)
