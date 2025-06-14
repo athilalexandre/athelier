@@ -6,6 +6,7 @@ import { ShippingAddress, OrderPayload } from '../types/checkout';
 import ShippingAddressForm from '../components/checkout/ShippingAddressForm';
 import OrderSummary from '../components/checkout/OrderSummary';
 import { toast } from 'react-toastify';
+import { orderService } from '../services/orderService';
 
 const CheckoutPage: React.FC = () => {
   const { items, getCartSubtotal, clearCart } = useCart();
@@ -13,6 +14,7 @@ const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!authLoading) {
@@ -33,7 +35,7 @@ const CheckoutPage: React.FC = () => {
     toast.success("Endereço de entrega salvo!");
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (!shippingAddress) {
       toast.error("Por favor, preencha o endereço de entrega.");
       return;
@@ -44,17 +46,32 @@ const CheckoutPage: React.FC = () => {
       return;
     }
 
+    setIsLoading(true);
+
     const orderPayload: OrderPayload = {
       shippingAddress: shippingAddress,
-      items: items,
+      items: items.map(item => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+        priceAtAddition: item.priceAtAddition,
+        customizationText: item.customization,
+        productName: item.product.name,
+      })),
+      paymentMethod: "credit_card",
       subtotal: getCartSubtotal(),
-      totalAmount: getCartSubtotal(), // Inicialmente, subtotal e totalAmount são iguais
+      totalAmount: getCartSubtotal(),
     };
 
-    console.log("Order Payload:", orderPayload);
-    toast.success("Pedido realizado com sucesso! (Logado no console)");
-    clearCart();
-    navigate('/order-received'); // Redirecionar para uma página de confirmação
+    try {
+      const createdOrder = await orderService.createOrder(orderPayload);
+      toast.success("Pedido realizado com sucesso!");
+      clearCart();
+      navigate(`/order-confirmation/${createdOrder.id}`);
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao finalizar pedido. Tente novamente.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (authLoading) {
@@ -62,7 +79,7 @@ const CheckoutPage: React.FC = () => {
   }
 
   if (!isAuthenticated || items.length === 0) {
-    return null; // Redirecionamento já ocorreu no useEffect
+    return null;
   }
 
   return (
@@ -77,8 +94,9 @@ const CheckoutPage: React.FC = () => {
           <button
             onClick={handlePlaceOrder}
             className="mt-6 w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            disabled={isLoading}
           >
-            Finalizar Pedido
+            {isLoading ? 'Finalizando...' : 'Finalizar Pedido'}
           </button>
         </div>
       </div>

@@ -1,4 +1,14 @@
-import { CartItem } from './cart';
+import { Product } from './api';
+
+// Definindo a estrutura de um item de carrinho para o payload de envio ao backend
+// Esta é uma versão "achatada" do CartItem para envio
+export interface CheckoutItem {
+  productId: string;
+  quantity: number;
+  priceAtAddition: number; // Preço no momento da adição (para segurança no backend)
+  customizationText?: string;
+  productName: string; // Nome para referência no backend (logs, mensagens de erro)
+}
 
 export interface ShippingAddress {
   fullName: string;
@@ -15,8 +25,9 @@ export interface ShippingAddress {
 
 export interface OrderPayload {
   shippingAddress: ShippingAddress;
-  items: CartItem[];
+  items: CheckoutItem[];
   subtotal: number;
   totalAmount: number;
-  // Pode incluir outros campos como frete, impostos, etc., em fases futuras.
+  paymentMethod: string;
+  paymentTransactionId?: string;
 } 
