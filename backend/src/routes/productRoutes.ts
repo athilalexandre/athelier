@@ -1,7 +1,7 @@
 import { Router, RequestHandler } from 'express';
 import * as productController from '../controllers/productController';
 import { authenticateToken, authorizeRoles } from '../middlewares/authMiddleware';
-import { Role } from '../types/role';
+import { Role } from '../generated/prisma';
 
 const router = Router();
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { Role } from '../types/role';
+import { Role } from '../generated/prisma';
 
 // Estendendo a interface Request do Express
 declare global {
