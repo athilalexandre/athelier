@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { Product } from '../types/api';
 import { productService } from '../services/productService';
 import { useCart } from '../context/CartContext';
+import { toast } from 'react-toastify';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,7 +47,7 @@ const ProductDetailPage: React.FC = () => {
   const handleAddToCart = () => {
     if (product) {
       addToCart(product, 1, customizationText);
-      alert(`${product.name} adicionado ao carrinho! Customização: ${customizationText || 'Nenhuma'}`);
+      toast.success(`${product.name} adicionado ao carrinho! Customização: ${customizationText || 'Nenhuma'}`);
     }
   };
 

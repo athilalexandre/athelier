@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 
 const CartPage: React.FC = () => {
-  const { cartItems, removeFromCart, updateItemQuantity, clearCart, getCartSubtotal, getTotalItemsCount } = useCart();
+  const { items, removeFromCart, updateItemQuantity, clearCart, getCartSubtotal, getTotalItemsCount } = useCart();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('pt-BR', {
@@ -12,85 +12,104 @@ const CartPage: React.FC = () => {
     }).format(price);
   };
 
-  const handleQuantityChange = (contentId: string, delta: number) => {
-    const item = cartItems.find(i => i.contentId === contentId);
-    if (item) {
-      updateItemQuantity(contentId, item.quantity + delta);
-    }
-  };
-
-  if (cartItems.length === 0) {
-    return (
-      <div className="container text-center py-12">
-        <h1 className="text-3xl font-bold mb-4">Seu carrinho está vazio</h1>
-        <p className="text-gray-600 mb-8">Adicione alguns produtos para começar a comprar!</p>
-        <Link to="/products" className="nav-link">
-          Ver Produtos
-        </Link>
-      </div>
-    );
-  }
-
   return (
-    <div className="container py-8">
-      <h1 className="text-3xl font-bold mb-6">Seu Carrinho ({getTotalItemsCount()} {getTotalItemsCount() === 1 ? 'item' : 'itens'})</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6 text-center">Seu Carrinho</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          {cartItems.map(item => (
-            <div key={item.contentId} className="cart-item">
-              <Link to={`/products/${item.product.id}`} className="cart-item-image-link">
-                <img
-                  src={item.product.images || "https://via.placeholder.com/100x100.png?text=Sem+Imagem"}
-                  alt={item.product.name}
-                  className="cart-item-image"
-                />
-              </Link>
-              <div className="cart-item-details">
-                <h2 className="cart-item-name">
-                  <Link to={`/products/${item.product.id}`}>{item.product.name}</Link>
-                </h2>
-                {item.customization && (
-                  <p className="cart-item-customization">Customização: {item.customization}</p>
-                )}
-                <p className="cart-item-price">{formatPrice(item.priceAtAddition)}</p>
-              </div>
-              <div className="cart-item-quantity-controls">
-                <button onClick={() => handleQuantityChange(item.contentId, -1)} className="quantity-button">-</button>
-                <span className="quantity-display">{item.quantity}</span>
-                <button onClick={() => handleQuantityChange(item.contentId, 1)} className="quantity-button">+</button>
-              </div>
-              <div className="cart-item-subtotal">
-                {formatPrice(item.priceAtAddition * item.quantity)}
-              </div>
-              <button onClick={() => removeFromCart(item.contentId)} className="remove-button">
-                Remover
-              </button>
+      {items.length === 0 ? (
+        <div className="text-center py-10">
+          <p className="text-lg text-gray-600">Seu carrinho está vazio.</p>
+          <Link to="/products" className="mt-4 inline-block bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
+            Continuar Comprando
+          </Link>
+        </div>
+      ) : (
+        <div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
+              <thead>
+                <tr className="bg-gray-100 border-b">
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Produto</th>
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Preço Unitário</th>
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Quantidade</th>
+                  <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700">Total</th>
+                  <th className="py-3 px-4"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((item) => (
+                  <tr key={item.contentId} className="border-b last:border-0">
+                    <td className="py-4 px-4 flex items-center">
+                      <img src={item.product.images || "https://via.placeholder.com/60"} alt={item.product.name} className="w-16 h-16 object-cover rounded mr-4" />
+                      <div>
+                        <Link to={`/products/${item.product.id}`} className="font-medium text-gray-800 hover:text-blue-600">{item.product.name}</Link>
+                        {item.customization && (
+                          <p className="text-sm text-gray-500 mt-1">Customização: {item.customization}</p>
+                        )}
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 text-gray-700">{formatPrice(item.priceAtAddition)}</td>
+                    <td className="py-4 px-4">
+                      <div className="flex items-center">
+                        <button
+                          onClick={() => updateItemQuantity(item.contentId, item.quantity - 1)}
+                          className="bg-gray-200 text-gray-700 px-3 py-1 rounded-l hover:bg-gray-300 focus:outline-none"
+                        >
+                          -
+                        </button>
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => updateItemQuantity(item.contentId, parseInt(e.target.value))}
+                          className="w-16 text-center border-t border-b border-gray-200 py-1 focus:outline-none"
+                          min="1"
+                        />
+                        <button
+                          onClick={() => updateItemQuantity(item.contentId, item.quantity + 1)}
+                          className="bg-gray-200 text-gray-700 px-3 py-1 rounded-r hover:bg-gray-300 focus:outline-none"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </td>
+                    <td className="py-4 px-4 text-gray-700">{formatPrice(item.priceAtAddition * item.quantity)}</td>
+                    <td className="py-4 px-4 text-right">
+                      <button
+                        onClick={() => removeFromCart(item.contentId)}
+                        className="text-red-600 hover:text-red-800 font-medium"
+                      >
+                        Remover
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex flex-col md:flex-row justify-between items-center mt-6 p-4 bg-white rounded-lg shadow-md">
+            <div className="mb-4 md:mb-0">
+              <p className="text-lg font-semibold">Total de Itens: {getTotalItemsCount()}</p>
+              <p className="text-xl font-bold">Subtotal: {formatPrice(getCartSubtotal())}</p>
             </div>
-          ))}
-
-          <div className="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-            <button onClick={clearCart} className="clear-cart-button">
-              Limpar Carrinho
-            </button>
-            <Link to="/products" className="continue-shopping-link">
-              Continuar Comprando →
-            </Link>
+            <div className="flex space-x-4">
+              <button
+                onClick={clearCart}
+                className="bg-red-500 text-white py-2 px-6 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+              >
+                Limpar Carrinho
+              </button>
+              <Link to="/checkout">
+                <button
+                  className="bg-green-500 text-white py-2 px-6 rounded-lg hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                >
+                  Finalizar Compra
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
-
-        <div className="cart-summary">
-          <h2 className="cart-summary-title">Resumo do Pedido</h2>
-          <div className="flex justify-between items-center mb-4">
-            <span className="cart-summary-label">Subtotal:</span>
-            <span className="cart-summary-value">{formatPrice(getCartSubtotal())}</span>
-          </div>
-          {/* Adicionar frete e total final posteriormente */}
-          <button className="checkout-button">
-            Finalizar Compra
-          </button>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

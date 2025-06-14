@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../../types/api';
 import { useCart } from '../../context/CartContext';
+import { toast } from 'react-toastify';
 
 interface ProductCardProps {
   product: Product;
@@ -22,7 +23,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     e.preventDefault();
     e.stopPropagation();
     addToCart(product, 1);
-    alert(`${product.name} adicionado ao carrinho!`);
+    toast.success(`${product.name} adicionado ao carrinho!`);
   };
 
   const placeholderImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8lRbS7eKYzDq-Ftxc1p8G_TTw2unWBMEYUw&s";
