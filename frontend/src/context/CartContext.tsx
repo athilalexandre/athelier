@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { Product } from '../types/api';
-import { CartItem, CartState } from '../types/cart';
+import { CartItem /*, CartState */ } from '../types/cart'; // Removido CartState pois não é usado diretamente aqui
 
 interface CartContextType {
   items: CartItem[];
