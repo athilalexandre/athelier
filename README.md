@@ -11,6 +11,9 @@ Este projeto é uma aplicação de e-commerce completa, desenvolvida com um back
 *   **Roles (USER/ADMIN):** Diferenciação de permissões entre usuários comuns e administradores.
 *   **Proteção de Rotas:** Endpoints do backend protegidos por JWT, com middlewares de autenticação e autorização por função (`authenticateToken`, `authorizeRoles`).
 *   **Contexto de Autenticação (Frontend):** Gerenciamento de estado de autenticação no frontend (`AuthContext`), facilitando o acesso ao status do usuário e funções de login/logout em toda a aplicação.
+*   **Recuperação de Senha:** Sistema completo de recuperação de senha com envio de e-mail e token de redefinição.
+*   **Validação de E-mail:** Sistema de verificação de e-mail com envio de código de confirmação.
+*   **Perfil do Usuário:** Gerenciamento de informações do usuário, incluindo foto de perfil e dados pessoais.
 
 ### 2. Gestão de Produtos
 
@@ -50,6 +53,32 @@ Este projeto é uma aplicação de e-commerce completa, desenvolvida com um back
 *   **Controlador de Pedidos (`orderController`):** Manipula as requisições de criação de pedidos, extrai dados do usuário autenticado e lida com respostas e erros HTTP de forma detalhada.
 *   **Rotas de Pedidos (`orderRoutes`):** Define a rota POST `/api/orders` para criação de pedidos, protegida por autenticação.
 *   **`asyncHandler` Utility:** Utilitário para lidar com funções assíncronas do Express, garantindo o tratamento de erros e a compatibilidade de tipagem.
+
+### 7. Sistema de Notificações
+
+*   **Notificações em Tempo Real:** Implementação de WebSocket para notificações em tempo real.
+*   **Notificações por E-mail:** Sistema de envio de e-mails para confirmações e atualizações.
+*   **Notificações Push:** Suporte para notificações push no navegador.
+*   **Central de Notificações:** Interface para gerenciar e visualizar todas as notificações.
+
+### 8. Sistema de Avaliações e Comentários
+
+*   **Avaliação de Produtos:** Sistema para usuários avaliarem produtos com estrelas e comentários.
+*   **Moderação de Comentários:** Sistema de moderação para administradores.
+*   **Fotos de Avaliação:** Suporte para upload de fotos nas avaliações.
+*   **Respostas às Avaliações:** Possibilidade de respostas às avaliações por administradores.
+
+### 9. Sistema de Favoritos
+
+*   **Lista de Favoritos:** Usuários podem adicionar produtos aos favoritos.
+*   **Sincronização:** Sincronização entre dispositivos através da conta do usuário.
+*   **Notificações de Preço:** Alertas quando produtos favoritos têm alteração de preço.
+
+### 10. Sistema de Cupons e Promoções
+
+*   **Cupons de Desconto:** Sistema para criar e aplicar cupons de desconto.
+*   **Promoções Automáticas:** Regras para promoções automáticas baseadas em categorias ou produtos.
+*   **Programa de Fidelidade:** Sistema de pontos e recompensas para clientes frequentes.
 
 ## Tecnologias Utilizadas
 
